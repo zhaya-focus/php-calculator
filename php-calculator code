@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PHP Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .calculator {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 300px;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .result {
+      margin-top: 10px;
+      font-weight: bold;
+      color: #333;
+    }
+    .dark {
+      background: #121212;
+      color: #f4f4f4;
+    }
+    .dark .calculator {
+      background: #1e1e1e;
+      box-shadow: 0 0 10px rgba(255,255,255,0.1);
+    }
+    .dark input, .dark select, .dark button {
+      background: #2c2c2c;
+      color: #f4f4f4;
+      border: 1px solid #555;
+    }
+    .toggle-btn {
+      margin-bottom: 20px;
+      padding: 8px 16px;
+      border: none;
+      background: #333;
+      color: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    @media (max-width: 400px) {
+      .calculator {
+        width: 90%;
+        padding: 15px;
+      }
+      input, select, button {
+        font-size: 16px;
+      }
+    }
+  </style>
+  <script>
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark");
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      const form = document.querySelector("form");
+      form.addEventListener("keypress", function (e) {
+        if (e.key === "Enter") {
+          form.submit();
+        }
+      });
+    });
+  </script>
+</head>
+<body>
+  <button class="toggle-btn" onclick="toggleDarkMode()">Toggle Dark Mode</button>
+
+  <div class="calculator">
+    <form method="post">
+      <input type="number" name="num1" placeholder="Enter first number" required>
+      <input type="number" name="num2" placeholder="Enter second number (if needed)">
+      <select name="operation" required>
+        <option value="">Select operation</option>
+        <option value="add">Addition (+)</option>
+        <option value="subtract">Subtraction (-)</option>
+        <option value="multiply">Multiplication (×)</option>
+        <option value="divide">Division (÷)</option>
+        <option value="percentage">Percentage (%)</option>
+        <option value="sqrt">Square Root (√)</option>
+      </select>
+      <button type="submit">Calculate</button>
+    </form>
+
+    <div class="result">
+      <?php
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+          $num1 = $_POST["num1"];
+          $num2 = $_POST["num2"];
+          $operation = $_POST["operation"];
+          $result = "";
+
+          switch ($operation) {
+            case "add":
+              $result = $num1 + $num2;
+              break;
+            case "subtract":
+              $result = $num1 - $num2;
+              break;
+            case "multiply":
+              $result = $num1 * $num2;
+              break;
+            case "divide":
+              if ($num2 == 0) {
+                $result = "Cannot divide by zero.";
+              } else {
+                $result = $num1 / $num2;
+              }
+              break;
+            case "percentage":
+              if ($num2 == 0) {
+                $result = "Cannot calculate percentage of zero.";
+              } else {
+                $result = ($num1 / $num2) * 100 . "%";
+              }
+              break;
+            case "sqrt":
+              if ($num1 < 0) {
+                $result = "Cannot take square root of negative number.";
+              } else {
+                $result = sqrt($num1);
+              }
+              break;
+            default:
+              $result = "Invalid operation.";
+          }
+
+          echo "Result: " . $result;
+        }
+      ?>
+    </div>
+  </div>
+</body>
+</html>
